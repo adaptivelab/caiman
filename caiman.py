@@ -41,3 +41,27 @@ def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
         logger.error('No soma-indexers found')
         hosts = ['localhost']
     return hosts
+
+
+class Ec2Instance(object):
+
+    def __init__(self, instance):
+        self.instance = instance
+        self._address = None
+
+    @property
+    def address(self):
+        if not self._address:
+            attrs = ['publicIp', 'public_dns_name']
+
+            # build up an interable of all attributes that exist and are
+            # not just empty strings
+            options = (getattr(self.instance, attr, None) for attr in attrs)
+            options = (match for match in options if match)
+
+            # only need the 1st value
+            self._address = next(options, None)
+        return self._address
+
+    def __repr__(self):
+        return '{} on {}'.format(repr(self.instance), self.address)
