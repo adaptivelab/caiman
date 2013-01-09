@@ -25,6 +25,8 @@ def get_running_indexers(name, vpc_id=config.vpc_id):
     filters = {'tag-key': name,
                'instance-state-name': 'running',
                'vpc-id': vpc_id}
+    if not filters['vpc-id']:
+        del filters['vpc-id']
     reservations = connection.get_all_instances(filters=filters)
     for reservation in reservations:
         for instance in reservation.instances:
