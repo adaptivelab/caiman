@@ -14,14 +14,12 @@ class Config(object):
     @property
     def vpc_id(self):
         vpc_id = os.environ.get('SOMA_VPC_ID', None)
-        if not vpc_id:
-            vpc_id = 111
         return vpc_id
 
 config = Config()
 
 
-def get_running_indexers(name, vpc_id=config.vpc_id):
+def get_running_instances(name, vpc_id=config.vpc_id):
     filters = {'tag-key': name,
                'instance-state-name': 'running',
                'vpc-id': vpc_id}
@@ -33,7 +31,7 @@ def get_running_indexers(name, vpc_id=config.vpc_id):
             yield instance
 
 
-get_running_instances = get_running_indexers
+get_running_indexers = get_running_instances
 
 
 def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
