@@ -5,7 +5,6 @@ from boto.ec2 import connect_to_region
 # hardcoding to eu-west until we need more regions
 REGION = 'eu-west-1'
 
-connection = connect_to_region(REGION)
 logger = logging.getLogger(__name__)
 
 
@@ -25,6 +24,7 @@ def get_running_instances(name, vpc_id=config.vpc_id):
                'vpc-id': vpc_id}
     if not filters['vpc-id']:
         del filters['vpc-id']
+    connection = connect_to_region(REGION)
     reservations = connection.get_all_instances(filters=filters)
     for reservation in reservations:
         for instance in reservation.instances:
