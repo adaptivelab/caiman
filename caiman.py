@@ -8,6 +8,10 @@ REGION = 'eu-west-1'
 logger = logging.getLogger(__name__)
 
 
+def get_name(role, environment):
+    return u'soma-{}-{}'.format(environment, role)
+
+
 class Config(object):
 
     @property
