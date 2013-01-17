@@ -2,6 +2,15 @@ import os
 import logging
 from boto.ec2 import connect_to_region
 
+
+try:
+    from logging import NullHandler
+except ImportError:
+
+    class NullHandler(logging.Handler): # NOQA
+        def emit(self, record):
+            pass
+
 # hardcoding to eu-west until we need more regions
 REGION = 'eu-west-1'
 
@@ -84,3 +93,40 @@ class Ec2Instance(object):
 
     def __repr__(self):
         return '{} on {}'.format(repr(self.instance), self.address)
+
+
+DEFAULT_LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+        'logsna': {
+            'format': '%(levelname)-8s [%(asctime)s] %(name)s +%(lineno)d: %(message)s'
+        }
+    },
+    'handlers': {
+        'default': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'logsna',
+        },
+        'null': {
+            'class': 'indexer.log.NullHandler',
+        }
+    },
+    'loggers': {
+    },
+}
+
+
+def add_remote_logger(remote_logger, logger_name, log_config):
+    if remote_logger:
+        log_config['handlers']['graypy'] = {
+            'class': 'graypy.GELFHandler',
+            'host': remote_logger,
+            'port': 12201,
+        }
+        log_config['loggers'][logger_name]['handlers'].append('graypy')
+    return log_config
