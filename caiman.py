@@ -113,7 +113,7 @@ DEFAULT_LOGGING = {
             'formatter': 'logsna',
         },
         'null': {
-            'class': 'indexer.log.NullHandler',
+            'class': 'caiman.NullHandler',
         }
     },
     'loggers': {
