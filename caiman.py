@@ -38,6 +38,21 @@ def get_running_instances(name, vpc_id=config.vpc_id):
 get_running_indexers = get_running_instances
 
 
+def get_running_instance_factory(environment_variable):
+
+    def get_running_instances_by_role(role):
+
+        try:
+            environment = os.environ[environment_variable]
+        except KeyError:
+            raise ValueError('Cannot determine running instances with '
+                             'undefined {} environment variable'
+                             .format(environment_variable))
+        name = get_name(role, environment)
+        return get_running_instances(name)
+    return get_running_instances_by_role
+
+
 def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
     hosts = [i.private_ip_address for i in get_running_indexers(name, vpc_id)]
     logger.debug('Found %d soma-indexers' % len(hosts))
