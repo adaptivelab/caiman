@@ -80,7 +80,7 @@ class Ec2Instance(object):
     @property
     def address(self):
         if not self._address:
-            attrs = ['publicIp', 'public_dns_name']
+            attrs = ['publicIp', 'public_dns_name', 'private_ip_address']
 
             # build up an interable of all attributes that exist and are
             # not just empty strings
