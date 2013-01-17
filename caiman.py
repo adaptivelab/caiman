@@ -121,6 +121,13 @@ DEFAULT_LOGGING = {
 }
 
 
+def get_remote_logger(instances):
+    winner = next(instances, None)
+    if winner:
+        winner = Ec2Instance(winner).address
+    return winner
+
+
 def add_remote_logger(remote_logger, logger_name, log_config):
     if remote_logger:
         log_config['handlers']['graypy'] = {
