@@ -107,6 +107,7 @@ class Ec2Instance(object):
         return '{} on {}'.format(repr(self.instance), self.address)
 
 
+LOGLEVEL = 'DEBUG' if os.environ['SOMA_ENVIRONMENT'] == 'demo' else 'ERROR'
 DEFAULT_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -120,7 +121,7 @@ DEFAULT_LOGGING = {
     },
     'handlers': {
         'default': {
-            'level': 'INFO',
+            'level': LOGLEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'logsna',
         },
