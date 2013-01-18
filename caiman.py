@@ -49,17 +49,26 @@ get_running_indexers = get_running_instances
 
 def get_running_instance_factory(environment_variable):
 
-    def get_running_instances_by_role(role):
+    class get_running_instances_by_role(object):
 
-        try:
-            environment = os.environ[environment_variable]
-        except KeyError:
-            raise ValueError('Cannot determine running instances with '
-                             'undefined {} environment variable'
-                             .format(environment_variable))
-        name = get_name(role, environment)
-        return get_running_instances(name)
-    return get_running_instances_by_role
+        def __call__(self, role):
+            return self.get_instances(role)
+
+        def get_instances(self, role):
+            try:
+                environment = os.environ[environment_variable]
+            except KeyError:
+                raise ValueError('Cannot determine running instances with '
+                                 'undefined {} environment variable'
+                                 .format(environment_variable))
+            name = get_name(role, environment)
+            return get_running_instances(name)
+
+        def addresses(self, role):
+            return (Ec2Instance(host).address for host in
+                    self.get_instances(role))
+
+    return get_running_instances_by_role()
 
 
 def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
