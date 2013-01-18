@@ -27,4 +27,5 @@ setup(
     ],
     tests_require=['fudge==1.0.3', 'pytest==2.3.4'],
     cmdclass={'test': PyTest},
+    install_requires=['lazypy==0.5'],
 )
