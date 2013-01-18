@@ -107,7 +107,7 @@ class Ec2Instance(object):
         return '{} on {}'.format(repr(self.instance), self.address)
 
 
-LOGLEVEL = 'DEBUG' if os.environ['SOMA_ENVIRONMENT'] == 'demo' else 'ERROR'
+LOGLEVEL = 'DEBUG' if os.environ.get('SOMA_ENVIRONMENT', '') == 'demo' else 'ERROR'
 DEFAULT_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
