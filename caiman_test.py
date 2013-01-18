@@ -40,3 +40,37 @@ class TestGetRunningInstanceFactory(object):
         getter = caiman.get_running_instance_factory('test_45')
         result = getter.addresses('purpose')
         assert list(result) == [11, 22]
+
+    @fudge.patch('caiman.get_running_instances')
+    def test_1st_address_returns_single_address(self, get_running_instances):
+        """.first_address returns single address"""
+
+        import os
+        os.environ = {'test_45': u'indexer'}
+
+        public = type('public', (object, ), {'publicIp': '44.55'})
+        dns = type('dns', (object, ), {'public_dns_name': 22})
+        response = public, dns
+
+        (get_running_instances
+         .expects_call()
+         .with_args('soma-indexer-purpose')
+         .returns(iter(response)))
+
+        getter = caiman.get_running_instance_factory('test_45')
+        assert getter.first_address('purpose') == '44.55'
+
+    @fudge.patch('caiman.get_running_instances')
+    def test_1st_address_handles_no_instances(self, get_running_instances):
+        """.first_address returns single address"""
+
+        import os
+        os.environ = {'variable_name': u'indexer'}
+
+        (get_running_instances
+         .expects_call()
+         .with_args('soma-indexer-surprise')
+         .returns(iter([])))
+
+        getter = caiman.get_running_instance_factory('variable_name')
+        assert getter.first_address('surprise') is None

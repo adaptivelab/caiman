@@ -68,6 +68,9 @@ def get_running_instance_factory(environment_variable):
             return (Ec2Instance(host).address for host in
                     self.get_instances(role))
 
+        def first_address(self, role, default=None):
+            return next(self.addresses(role), default)
+
     return get_running_instances_by_role()
 
 
