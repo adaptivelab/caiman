@@ -112,6 +112,9 @@ DEFAULT_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
+        'simple': {
+            'format': '%(message)s'
+        },
         'standard': {
             'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
