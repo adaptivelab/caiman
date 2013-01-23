@@ -125,6 +125,11 @@ DEFAULT_LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'logsna',
         },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'logsna',
+        },
         'null': {
             'class': 'caiman.NullHandler',
         }
