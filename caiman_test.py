@@ -5,6 +5,18 @@ import fudge
 class TestGetRunningInstanceFactory(object):
 
     @fudge.patch('caiman.get_running_instances')
+    def test_can_set_a_specific_ec2_tag_instead_of_role(self, get_running_instances):
+
+        (get_running_instances
+         .expects_call()
+         .with_args('my_specific_ec2_tag')
+         .returns(iter(range(5))))
+
+        getter = caiman.get_running_instance_factory()
+        result = getter('my_specific_ec2_tag')
+        assert list(result) == [0, 1, 2, 3, 4]
+
+    @fudge.patch('caiman.get_running_instances')
     def test_returns_callable(self, get_running_instances):
         """returns callable
 

@@ -47,12 +47,32 @@ def get_running_instances(name, vpc_id=config.vpc_id):
 get_running_indexers = get_running_instances
 
 
-def get_running_instance_factory(environment_variable):
+def get_running_instance_factory(environment_variable=None):
+    """
+    Returns an appropriate factory callable for getting running instances.  If
+    an environment_variable is passed in, instances are discovered with an ec2
+    tag prefixed by 'soma-<environment>-'.  Otherwise, the whole ec2 tag is
+    used for discovering instances.
+    """
+    class GetRunningInstances(object):
 
-    class get_running_instances_by_role(object):
+        def __call__(self, ec2_tag):
+            return self.get_instances(ec2_tag)
 
-        def __call__(self, role):
-            return self.get_instances(role)
+        def get_instances(self, ec2_tag):
+            return get_running_instances(ec2_tag)
+
+        def addresses(self, ec2_tag):
+            return (Ec2Instance(host).address for host in
+                    self.get_instances(ec2_tag))
+
+        def first_address(self, ec2_tag, default=None):
+            return next(self.addresses(ec2_tag), default)
+
+    class GetRunningInstancesByEc2Tag(GetRunningInstances):
+        pass
+
+    class GetRunningInstancesByRole(GetRunningInstances):
 
         def get_instances(self, role):
             try:
@@ -62,16 +82,12 @@ def get_running_instance_factory(environment_variable):
                                  'undefined {} environment variable'
                                  .format(environment_variable))
             name = get_name(role, environment)
-            return get_running_instances(name)
+            return super(GetRunningInstancesByRole, self).get_instances(name)
 
-        def addresses(self, role):
-            return (Ec2Instance(host).address for host in
-                    self.get_instances(role))
-
-        def first_address(self, role, default=None):
-            return next(self.addresses(role), default)
-
-    return get_running_instances_by_role()
+    if environment_variable:
+        return GetRunningInstancesByRole()
+    else:
+        return GetRunningInstancesByEc2Tag()
 
 
 def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
