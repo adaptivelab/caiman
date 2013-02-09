@@ -17,10 +17,14 @@ class PyTest(TestCommand):
 
 setup(
     name='caiman',
-    version='1.0',
+    version='1.1',
     long_description='Simple helpers for aws',
     include_package_data=True,
+    packages=['caiman'],
     zip_safe=False,
+    install_requires=[
+        'boto==2.8.0',
+    ],
     tests_require=['fudge==1.0.3', 'pytest==2.3.4'],
     cmdclass={'test': PyTest},
 )
