@@ -49,45 +49,47 @@ get_running_indexers = get_running_instances
 
 def get_running_instance_factory(environment_variable=None):
     """
-    Returns an appropriate factory callable for getting running instances.  If
-    an environment_variable is passed in, instances are discovered with an ec2
-    tag prefixed by 'soma-<environment>-'.  Otherwise, the whole ec2 tag is
-    used for discovering instances.
+    Returns an appropriate factory callable for getting running instances.
+
+    If an environment_variable is passed in, instances are discovered with an
+    ec2 tag prefixed by 'soma-<environment>-'.  Otherwise, the whole ec2 tag
+    is used for discovering instances.
     """
-    class GetRunningInstances(object):
+    return RunningInstances(environment_variable)
 
-        def __call__(self, ec2_tag):
-            return self.get_instances(ec2_tag)
 
-        def get_instances(self, ec2_tag):
-            return get_running_instances(ec2_tag)
+class RunningInstances(object):
 
-        def addresses(self, ec2_tag):
-            return (Ec2Instance(host).address for host in
-                    self.get_instances(ec2_tag))
+    def __init__(self, environment_variable=None):
+        """
+        Returns an appropriate factory callable for getting running instances.
 
-        def first_address(self, ec2_tag, default=None):
-            return next(self.addresses(ec2_tag), default)
+        If an environment_variable is passed in, instances are discovered with
+        an ec2 tag prefixed by 'soma-<environment>-'.  Otherwise, the whole
+        ec2 tag is used for discovering instances.
+        """
+        self.environment_variable = environment_variable
 
-    class GetRunningInstancesByEc2Tag(GetRunningInstances):
-        pass
+    def __call__(self, ec2_tag):
+        return self.get_instances(ec2_tag)
 
-    class GetRunningInstancesByRole(GetRunningInstances):
-
-        def get_instances(self, role):
+    def get_instances(self, role):
+        if self.environment_variable:
             try:
-                environment = os.environ[environment_variable]
+                environment = os.environ[self.environment_variable]
             except KeyError:
                 raise ValueError('Cannot determine running instances with '
                                  'undefined {} environment variable'
-                                 .format(environment_variable))
-            name = get_name(role, environment)
-            return super(GetRunningInstancesByRole, self).get_instances(name)
+                                 .format(self.environment_variable))
+            role = get_name(role, environment)
+        return get_running_instances(role)
 
-    if environment_variable:
-        return GetRunningInstancesByRole()
-    else:
-        return GetRunningInstancesByEc2Tag()
+    def addresses(self, ec2_tag):
+        return (Ec2Instance(host).address for host in
+                self.get_instances(ec2_tag))
+
+    def first_address(self, ec2_tag, default=None):
+        return next(self.addresses(ec2_tag), default)
 
 
 def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
