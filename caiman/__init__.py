@@ -73,7 +73,7 @@ class RunningInstances(object):
     def __call__(self, ec2_tag):
         return self.get_instances(ec2_tag)
 
-    def get_instances(self, role):
+    def get_instances(self, role_or_ec2_tag):
         if self.environment_variable:
             try:
                 environment = os.environ[self.environment_variable]
@@ -81,8 +81,8 @@ class RunningInstances(object):
                 raise ValueError('Cannot determine running instances with '
                                  'undefined {} environment variable'
                                  .format(self.environment_variable))
-            role = get_name(role, environment)
-        return get_running_instances(role)
+            role_or_ec2_tag = get_name(role_or_ec2_tag, environment)
+        return get_running_instances(role_or_ec2_tag)
 
     def addresses(self, ec2_tag):
         return (Ec2Instance(host).address for host in
