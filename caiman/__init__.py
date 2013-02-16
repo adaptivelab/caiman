@@ -1,5 +1,6 @@
 import os
 import logging
+import warnings
 from boto.ec2 import connect_to_region
 
 
@@ -55,6 +56,8 @@ def get_running_instance_factory(environment_variable=None):
     ec2 tag prefixed by 'soma-<environment>-'.  Otherwise, the whole ec2 tag
     is used for discovering instances.
     """
+    warnings.warn('get_running_instance_factory is deprecated; '
+                  'please use caiman.RunningInstances class instead')
     return RunningInstances(environment_variable)
 
 
