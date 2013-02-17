@@ -1,3 +1,4 @@
+import os
 import caiman
 import fudge
 
@@ -22,8 +23,7 @@ class TestGetRunningInstanceFactory(object):
 
         get_running_instance_factory returns a callable that calculates a
         name/tag and then proxies to get_running_instance"""
-        import os
-        os.environ = {'some_var': 200}
+        os.environ['some_var'] = '200'
 
         (get_running_instances
          .expects_call()
@@ -37,8 +37,7 @@ class TestGetRunningInstanceFactory(object):
     @fudge.patch('caiman.get_running_instances')
     def test_addresses_returns_addresses(self, get_running_instances):
         """.addresses returns addresses"""
-        import os
-        os.environ = {'test_45': u'indexer'}
+        os.environ['test_45'] = u'indexer'
 
         public = type('public', (object, ), {'publicIp': 11})
         dns = type('dns', (object, ), {'public_dns_name': 22})
@@ -57,8 +56,7 @@ class TestGetRunningInstanceFactory(object):
     def test_1st_address_returns_single_address(self, get_running_instances):
         """.first_address returns single address"""
 
-        import os
-        os.environ = {'test_45': u'indexer'}
+        os.environ['test_45'] = u'indexer'
 
         public = type('public', (object, ), {'publicIp': '44.55'})
         dns = type('dns', (object, ), {'public_dns_name': 22})
@@ -76,8 +74,7 @@ class TestGetRunningInstanceFactory(object):
     def test_1st_address_handles_no_instances(self, get_running_instances):
         """.first_address returns single address"""
 
-        import os
-        os.environ = {'variable_name': u'indexer'}
+        os.environ['variable_name'] = u'indexer'
 
         (get_running_instances
          .expects_call()
