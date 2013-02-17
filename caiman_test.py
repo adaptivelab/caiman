@@ -83,3 +83,29 @@ class TestRunningInstance(object):
 
         running_instances = caiman.RunningInstances('variable_name')
         assert running_instances.first_address('surprise') is None
+
+
+class TestGetRunningInstances(object):
+
+    @fudge.patch('caiman.connect_to_region')
+    def test_with_reservations(self, connect_to_region):
+
+        instances = [100, 200, 300]
+        reservations = [fudge.Fake('reservation').has_attr(instances=instances)]
+        connection = (fudge.Fake('connection')
+                      .expects('get_all_instances')
+                      .returns(reservations))
+        connect_to_region.expects_call().with_args(caiman.REGION).returns(connection)
+        instances = list(caiman.get_running_instances('n/a'))
+        assert instances == [100, 200, 300]
+
+    @fudge.patch('caiman.connect_to_region')
+    def test_no_reservations(self, connect_to_region):
+
+        reservations = []
+        connection = (fudge.Fake('connection')
+                      .expects('get_all_instances')
+                      .returns(reservations))
+        connect_to_region.expects_call().with_args(caiman.REGION).returns(connection)
+        instances = list(caiman.get_running_instances('n/a'))
+        assert instances == []
