@@ -1,6 +1,7 @@
 import os
 import caiman
 import fudge
+import pytest
 
 
 class TestRunningInstance(object):
@@ -84,6 +85,13 @@ class TestRunningInstance(object):
         running_instances = caiman.RunningInstances('variable_name')
         assert running_instances.first_address('surprise') is None
 
+    @fudge.patch('caiman.get_running_instances')
+    def test_raises_valueerror_w_nonexistant_envvar(self, get_instances):
+        """raises ValueError if instantiated with non-existant env var"""
+        running_instances = caiman.RunningInstances('non-existant')
+        with pytest.raises(ValueError):
+            running_instances('doomed')
+
 
 class TestGetRunningInstances(object):
 
@@ -109,3 +117,21 @@ class TestGetRunningInstances(object):
         connect_to_region.expects_call().with_args(caiman.REGION).returns(connection)
         instances = list(caiman.get_running_instances('n/a'))
         assert instances == []
+
+
+class TestAddRemoteLogger(object):
+
+    def test_adds_graypy_handler_to_config(self):
+        remote_address = '10.44.22.241'
+        logger_name = 'some_logger_name'
+
+        log_config = {
+            'handlers': {},
+            'loggers': {
+                logger_name: {'handlers': []}
+            }
+        }
+        updated_config = caiman.add_remote_logger(remote_address,
+                                                  logger_name,
+                                                  log_config)
+        assert updated_config['handlers']['graypy']['host'] == remote_address
