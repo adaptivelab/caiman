@@ -3,7 +3,7 @@ import caiman
 import fudge
 
 
-class TestGetRunningInstanceFactory(object):
+class TestRunningInstance(object):
 
     @fudge.patch('caiman.get_running_instances')
     def test_can_set_a_specific_ec2_tag_instead_of_role(self, get_running_instances):
