@@ -12,8 +12,8 @@ class TestGetRunningInstanceFactory(object):
          .with_args('my_specific_ec2_tag')
          .returns(iter(range(5))))
 
-        getter = caiman.get_running_instance_factory()
-        result = getter('my_specific_ec2_tag')
+        running_instances = caiman.RunningInstances()
+        result = running_instances('my_specific_ec2_tag')
         assert list(result) == [0, 1, 2, 3, 4]
 
     @fudge.patch('caiman.get_running_instances')
@@ -30,8 +30,8 @@ class TestGetRunningInstanceFactory(object):
          .with_args('soma-200-break')
          .returns(iter(range(5))))
 
-        getter = caiman.get_running_instance_factory('some_var')
-        result = getter('break')
+        running_instances = caiman.RunningInstances('some_var')
+        result = running_instances('break')
         assert list(result) == [0, 1, 2, 3, 4]
 
     @fudge.patch('caiman.get_running_instances')
@@ -49,8 +49,8 @@ class TestGetRunningInstanceFactory(object):
          .with_args('soma-indexer-purpose')
          .returns(iter(response)))
 
-        getter = caiman.get_running_instance_factory('test_45')
-        result = getter.addresses('purpose')
+        running_instances = caiman.RunningInstances('test_45')
+        result = running_instances.addresses('purpose')
         assert list(result) == [11, 22]
 
     @fudge.patch('caiman.get_running_instances')
@@ -69,8 +69,8 @@ class TestGetRunningInstanceFactory(object):
          .with_args('soma-indexer-purpose')
          .returns(iter(response)))
 
-        getter = caiman.get_running_instance_factory('test_45')
-        assert getter.first_address('purpose') == '44.55'
+        running_instances = caiman.RunningInstances('test_45')
+        assert running_instances.first_address('purpose') == '44.55'
 
     @fudge.patch('caiman.get_running_instances')
     def test_1st_address_handles_no_instances(self, get_running_instances):
@@ -84,5 +84,5 @@ class TestGetRunningInstanceFactory(object):
          .with_args('soma-indexer-surprise')
          .returns(iter([])))
 
-        getter = caiman.get_running_instance_factory('variable_name')
-        assert getter.first_address('surprise') is None
+        running_instances = caiman.RunningInstances('variable_name')
+        assert running_instances.first_address('surprise') is None
