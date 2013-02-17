@@ -22,17 +22,7 @@ def get_name(role, environment):
     return u'soma-{}-{}'.format(environment, role)
 
 
-class Config(object):
-
-    @property
-    def vpc_id(self):
-        vpc_id = os.environ.get('SOMA_VPC_ID', None)
-        return vpc_id
-
-config = Config()
-
-
-def get_running_instances(name, vpc_id=config.vpc_id):
+def get_running_instances(name, vpc_id=None):
     filters = {'tag-key': name,
                'instance-state-name': 'running',
                'vpc-id': vpc_id}
@@ -43,22 +33,6 @@ def get_running_instances(name, vpc_id=config.vpc_id):
     for reservation in reservations:
         for instance in reservation.instances:
             yield instance
-
-
-get_running_indexers = get_running_instances
-
-
-def get_running_instance_factory(environment_variable=None):
-    """
-    Returns an appropriate factory callable for getting running instances.
-
-    If an environment_variable is passed in, instances are discovered with an
-    ec2 tag prefixed by 'soma-<environment>-'.  Otherwise, the whole ec2 tag
-    is used for discovering instances.
-    """
-    warnings.warn('get_running_instance_factory is deprecated; '
-                  'please use caiman.RunningInstances class instead')
-    return RunningInstances(environment_variable)
 
 
 class RunningInstances(object):
@@ -112,15 +86,6 @@ class RunningInstances(object):
         :rtype: string
         """
         return next(self.addresses(ec2_tag), default)
-
-
-def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
-    hosts = [i.private_ip_address for i in get_running_indexers(name, vpc_id)]
-    logger.debug('Found %d soma-indexers' % len(hosts))
-    if not hosts:
-        logger.error('No soma-indexers found')
-        hosts = ['localhost']
-    return hosts
 
 
 class Ec2Instance(object):
@@ -193,13 +158,6 @@ DEFAULT_LOGGING = {
 }
 
 
-def get_remote_logger(instances):
-    winner = next(instances, None)
-    if winner:
-        winner = Ec2Instance(winner).address
-    return winner
-
-
 def add_remote_logger(remote_logger, logger_name, log_config):
     """Adds graypy handler to log_config.
 
@@ -219,3 +177,45 @@ def add_remote_logger(remote_logger, logger_name, log_config):
         }
         log_config['loggers'][logger_name]['handlers'].append('graypy')
     return log_config
+
+# Deprecated functions. To be deleted once client code that uses them is
+# updated.
+
+
+def get_remote_logger(instances):
+    warnings.warn('get_remote_logger is deprecated; please use '
+                  'caiman.RunningInstances().first_address("logger") instead')
+    winner = next(instances, None)
+    if winner:
+        winner = Ec2Instance(winner).address
+    return winner
+
+
+def get_running_instance_factory(environment_variable=None):
+    """
+    Returns an appropriate factory callable for getting running instances.
+
+    If an environment_variable is passed in, instances are discovered with an
+    ec2 tag prefixed by 'soma-<environment>-'.  Otherwise, the whole ec2 tag
+    is used for discovering instances.
+    """
+    warnings.warn('get_running_instance_factory is deprecated; '
+                  'please use caiman.RunningInstances class instead')
+    return RunningInstances(environment_variable)
+
+# Legacy functions. Functions that were (unwisely) added to caiman as they
+# were in use somewhere across the soma project. May not be in use any longer
+
+
+def get_running_indexer_hostnames(name, vpc_id=None):
+    # TODO this function is only used in soma-stream/test_indexing.py +48
+    # can probably be deleted
+    hosts = [i.private_ip_address for i in get_running_indexers(name, vpc_id)]
+    logger.debug('Found %d soma-indexers' % len(hosts))
+    if not hosts:
+        logger.error('No soma-indexers found')
+        hosts = ['localhost']
+    return hosts
+
+
+get_running_indexers = get_running_instances
