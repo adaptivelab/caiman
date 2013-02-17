@@ -75,3 +75,17 @@ The only difference in these cases is that instead of having to specify the
 full tag name `RunningInstances` automatically converted `database` into
 `projectname-demo-database` for us
 
+
+
+Classes
+~~~~~~~
+
+.. module:: caiman
+.. autoclass:: RunningInstances
+   :members:
+   :undoc-members:
+.. autoattribute:: RunningInstances
+
+.. autoclass:: Ec2Instance
+   :members:
+.. autoattribute:: Ec2Instance

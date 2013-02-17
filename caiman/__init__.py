@@ -62,14 +62,17 @@ def get_running_instance_factory(environment_variable=None):
 
 
 class RunningInstances(object):
+    """Discover running instances on ec2 by tag or by role."""
 
     def __init__(self, environment_variable=None):
         """
-        Returns an appropriate factory callable for getting running instances.
 
         If an environment_variable is passed in, instances are discovered with
         an ec2 tag prefixed by 'soma-<environment>-'.  Otherwise, the whole
         ec2 tag is used for discovering instances.
+
+        :param string environment_variable: name of environment variable that
+            denotes the current application enviroment (e.g.  demo, production)
         """
         self.environment_variable = environment_variable
 
@@ -77,6 +80,10 @@ class RunningInstances(object):
         return self.get_instances(ec2_tag)
 
     def get_instances(self, role_or_ec2_tag):
+        """Return generator of discovered ec2 instances
+
+        :param string ec2_tag: description used to discover instances
+        """
         if self.environment_variable:
             try:
                 environment = os.environ[self.environment_variable]
@@ -88,10 +95,22 @@ class RunningInstances(object):
         return get_running_instances(role_or_ec2_tag)
 
     def addresses(self, ec2_tag):
+        """
+        Return generator of the address of each discovered instance.
+
+        :param string ec2_tag: description used to discover instances
+        """
         return (Ec2Instance(host).address for host in
                 self.get_instances(ec2_tag))
 
-    def first_address(self, ec2_tag, default=None):
+    def first_address(self, ec2_tag, default=''):
+        """
+        Return the 1st discovered address.
+
+        :param string ec2_tag: description used to discover instances
+        :param string default: fallback value used when no instances can be found
+        :rtype: string
+        """
         return next(self.addresses(ec2_tag), default)
 
 
@@ -105,6 +124,17 @@ def get_running_indexer_hostnames(name, vpc_id=config.vpc_id):
 
 
 class Ec2Instance(object):
+    """Wrapper around a boto ec2instance that adds address attribute.
+
+    Ec2Instance.address delegates to the 1st available way it can find to
+    address the boto ec2instance with the order of preference being:
+        * publicIp
+        * public_dns_name
+        * private_ip_address
+
+    Attributes:
+        address: Hostname or IP of the wrapped boto ec2instance
+    """
 
     def __init__(self, instance):
         self.instance = instance
@@ -171,6 +201,16 @@ def get_remote_logger(instances):
 
 
 def add_remote_logger(remote_logger, logger_name, log_config):
+    """Adds graypy handler to log_config.
+
+    Args:
+        remote_logger: The ip or hostname of a logger server
+        logger_name: The name of logger to which we add the graypy handler
+        log_config: A pre-existing log_config dict to add the handler to
+
+    Returns:
+        The modified log_config dict
+    """
     if remote_logger:
         log_config['handlers']['graypy'] = {
             'class': 'graypy.GELFHandler',
