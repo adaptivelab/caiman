@@ -96,9 +96,6 @@ class Ec2Instance(object):
         * publicIp
         * public_dns_name
         * private_ip_address
-
-    Attributes:
-        address: Hostname or IP of the wrapped boto ec2instance
     """
 
     def __init__(self, instance):
