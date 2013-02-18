@@ -76,7 +76,6 @@ full tag name `RunningInstances` automatically converted `database` into
 `projectname-demo-database` for us
 
 
-
 Classes
 ~~~~~~~
 

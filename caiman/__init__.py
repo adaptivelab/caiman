@@ -99,11 +99,13 @@ class Ec2Instance(object):
     """
 
     def __init__(self, instance):
+        #: wrapped ec2instance
         self.instance = instance
         self._address = None
 
     @property
     def address(self):
+        """Address of wrapped ec2instance"""
         if not self._address:
             attrs = ['publicIp', 'public_dns_name', 'private_ip_address']
 
