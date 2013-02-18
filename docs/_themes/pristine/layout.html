@@ -1,0 +1,27 @@
+{%- extends "basic/layout.html" %}
+
+{% block relbar2 %}
+    {% if theme_github_fork %}
+        <a class="fork" href="http://github.com/{{ theme_github_fork }}">
+            <img alt="Fork me on Github" src="{{ pathto('_static/github-ribbon.png', 1) }}" width="149" height="149">
+        </a>
+    {% elif theme_bitbucket_fork %}
+        <a class="fork" href="https://bitbucket.org/{{ theme_bitbucket_fork }}">
+            <img alt="Fork me on Bitbucket" src="{{ pathto('_static/bitbucket-ribbon.png', 1) }}" width="150" height="150" />
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+    {% if pagename == 'index' %}
+        <div class="indexwrapper">
+    {% endif %}
+{% endblock %}
+
+{%- block footer %}
+    {{ super() }}
+    {% if pagename == 'index' %}
+        </div>
+    {% endif %}
+{%- endblock %}
