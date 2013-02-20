@@ -38,6 +38,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="#">caiman 1.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -53,6 +56,164 @@
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
+</div>
+</div>
+<div class="section" id="caiman">
+<h1>CAIMAN<a class="headerlink" href="#caiman" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="using-caiman">
+<h2>Using caiman<a class="headerlink" href="#using-caiman" title="Permalink to this headline">¶</a></h2>
+<p>The main useful feature of caiman is <cite>RunningInstances</cite> which is used for
+discovery of running ec2 instances:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">caiman</span> <span class="kn">import</span> <span class="n">RunningInstances</span>
+</pre></div>
+</div>
+<p>When instantiated without arguments, each method of <cite>RunningInstances</cite> expects
+as its sole argument the tag of an ec2 instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span> <span class="o">=</span> <span class="n">RunningInstances</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span><span class="o">.</span><span class="n">addresses</span><span class="p">(</span><span class="s">&#39;some-tag-used-on-ec2&#39;</span><span class="p">)</span>
+<span class="go">&lt;generator object &lt;genexpr&gt; at 0x10eca3820&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">address</span> <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">running_instances</span><span class="o">.</span><span class="n">addresses</span><span class="p">(</span><span class="s">&#39;some-tag-used-on-ec2&#39;</span><span class="p">)]</span>
+<span class="go">[u&#39;ec2-54-246-16-213.eu-west-1.compute.amazonaws.com&#39;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span><span class="o">.</span><span class="n">first_address</span><span class="p">(</span><span class="s">&#39;some-tag-used-on-ec2&#39;</span><span class="p">)</span>
+<span class="go">u&#39;ec2-54-246-16-213.eu-west-1.compute.amazonaws.com&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span><span class="o">.</span><span class="n">get_instances</span><span class="p">(</span><span class="s">&#39;some-tag-used-on-ec2&#39;</span><span class="p">)</span>
+<span class="go">&lt;generator object get_running_instances at 0x10f7574b0&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">instance</span> <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">running_instances</span><span class="o">.</span><span class="n">get_instances</span><span class="p">(</span><span class="s">&#39;some-tag-used-on-ec2&#39;</span><span class="p">)]</span>
+<span class="go">[Instance:i-4ae04800]</span>
+</pre></div>
+</div>
+<p>Alternatively, <cite>RunningInstances</cite> can be instantiated with the name of an
+environment variable the value of which will be used to create a tag prefix
+meaning that instead of complete tags being required for discovery, roles
+alone can be used. This only makes sense with the AdaptiveLab naming
+convention and so an explanation of that convention is in order.</p>
+<p>Tags are made of three components:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">projectname</span><span class="o">-</span><span class="n">environment</span><span class="o">-</span><span class="n">role</span>
+</pre></div>
+</div>
+<p>Where environment could be production, demo, staging, etc. and role could be
+database, webserver, logger, etc. So a server used for logging in the
+production environment of the globaldomination project would have a tag like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">globaldomination</span><span class="o">-</span><span class="n">production</span><span class="o">-</span><span class="n">logger</span>
+</pre></div>
+</div>
+<p>Using <cite>RunningInstances</cite> with the environment variable and role names looks
+almost identical to using it with fully-formed tags:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;an_agreed_upon_variable_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;demo&#39;</span> <span class="c"># of course environment variables in real systems are not typically set like this</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span> <span class="o">=</span> <span class="n">RunningInstances</span><span class="p">(</span><span class="s">&#39;an_agreed_upon_variable_name&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span><span class="o">.</span><span class="n">addresses</span><span class="p">(</span><span class="s">&#39;database&#39;</span><span class="p">)</span>
+<span class="go">&lt;generator object &lt;genexpr&gt; at 0x10eca1370&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">address</span> <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">running_instances</span><span class="o">.</span><span class="n">addresses</span><span class="p">(</span><span class="s">&#39;database&#39;</span><span class="p">)]</span>
+<span class="go">[u&#39;ec2-54-246-16-213.eu-west-1.compute.amazonaws.com&#39;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span><span class="o">.</span><span class="n">first_address</span><span class="p">(</span><span class="s">&#39;database&#39;</span><span class="p">)</span>
+<span class="go">u&#39;ec2-54-246-16-213.eu-west-1.compute.amazonaws.com&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">running_instances</span><span class="o">.</span><span class="n">get_instances</span><span class="p">(</span><span class="s">&#39;database&#39;</span><span class="p">)</span>
+<span class="go">&lt;generator object get_running_instances at 0x10f7574b0&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">instance</span> <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">running_instances</span><span class="o">.</span><span class="n">get_instances</span><span class="p">(</span><span class="s">&#39;database&#39;</span><span class="p">)]</span>
+<span class="go">[Instance:i-4ae04800]</span>
+</pre></div>
+</div>
+<p>The only difference in these cases is that instead of having to specify the
+full tag name <cite>RunningInstances</cite> automatically converted <cite>database</cite> into
+<cite>projectname-demo-database</cite> for us</p>
+</div>
+<div class="section" id="module-caiman">
+<span id="api"></span><h2>API<a class="headerlink" href="#module-caiman" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="caiman.RunningInstances">
+<em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">RunningInstances</tt><big>(</big><em>environment_variable=None</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discover running instances on ec2 by tag or by role.</p>
+<dl class="method">
+<dt id="caiman.RunningInstances.addresses">
+<tt class="descname">addresses</tt><big>(</big><em>ec2_tag</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.addresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return generator of the address of each discovered instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ec2_tag</strong> (<em>string</em>) &#8211; description used to discover instances</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caiman.RunningInstances.first_address">
+<tt class="descname">first_address</tt><big>(</big><em>ec2_tag</em>, <em>default=''</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.first_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the 1st discovered address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ec2_tag</strong> (<em>string</em>) &#8211; description used to discover instances</li>
+<li><strong>default</strong> (<em>string</em>) &#8211; fallback value used when no instances can be found</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caiman.RunningInstances.get_instances">
+<tt class="descname">get_instances</tt><big>(</big><em>role_or_ec2_tag</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.get_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return generator of discovered ec2 instances</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ec2_tag</strong> (<em>string</em>) &#8211; description used to discover instances</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="caiman.Ec2Instance">
+<em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">Ec2Instance</tt><big>(</big><em>instance</em><big>)</big><a class="headerlink" href="#caiman.Ec2Instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around a boto ec2instance that adds address attribute.</p>
+<p>Ec2Instance.address delegates to the 1st available way it can find to
+address the boto ec2instance with the order of preference being:</p>
+<blockquote>
+<div><ul class="simple">
+<li>publicIp</li>
+<li>public_dns_name</li>
+<li>private_ip_address</li>
+</ul>
+</div></blockquote>
+<dl class="attribute">
+<dt id="caiman.Ec2Instance.address">
+<tt class="descname">address</tt><a class="headerlink" href="#caiman.Ec2Instance.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Address of wrapped ec2instance</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caiman.Ec2Instance.instance">
+<tt class="descname">instance</tt><em class="property"> = None</em><a class="headerlink" href="#caiman.Ec2Instance.instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapped ec2instance</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -73,6 +234,11 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to caiman&#8217;s documentation!</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#caiman">CAIMAN</a><ul>
+<li><a class="reference internal" href="#using-caiman">Using caiman</a></li>
+<li><a class="reference internal" href="#module-caiman">API</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
