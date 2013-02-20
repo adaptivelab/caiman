@@ -14,6 +14,6 @@ set -e
     rm -r "${BUILD_FILES[@]}"
     git add -A
     git commit -m "Generated docs for $(git log develop -1 --oneline --abbrev-commit)"
-    echo git push
+    git push
     git checkout develop
 )
