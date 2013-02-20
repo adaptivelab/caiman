@@ -11,6 +11,7 @@ BUILDDIR      = _build
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+BUILD_FILES     = caiman docs README.rst
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
@@ -37,6 +38,7 @@ help:
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  gh-pages   to make HTML files and push them to gh-pages"
 
 clean:
 	-rm -rf $(BUILDDIR)/*
@@ -151,3 +153,25 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+CHDIR_SHELL := $(SHELL)
+define chdir
+	$(eval _D=$(firstword $(1) $(@D)))
+	$(info $(MAKE): cd $(_D)) $(eval SHELL = cd $(_D); $(CHDIR_SHELL))
+endef
+
+gh-pages:
+
+	$(call chdir, ..)
+	git checkout gh-pages                                                              ; \
+	git checkout develop $(BUILD_FILES)                                                ; \
+	git reset HEAD                                                                     ; \
+	cd docs                                                                            ; \
+	make html                                                                          ; \
+	cd ..                                                                              ; \
+	rsync -urv docs/_build/html/ .                                                     ; \
+	rm -r $(BUILD_FILES)                                                               ; \
+	git add -A                                                                         ; \
+	git commit -m "Generated docs for $(git log develop -1 --oneline --abbrev-commit)" ; \
+	echo git push                                                                      ; \
+	git checkout develop                                                               ; \
