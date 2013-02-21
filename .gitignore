@@ -34,3 +34,4 @@ nosetests.xml
 .project
 .ropeproject
 .pydevproject
+docs/_build/
