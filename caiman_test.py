@@ -83,7 +83,7 @@ class TestRunningInstance(object):
          .returns(iter([])))
 
         running_instances = caiman.RunningInstances('variable_name')
-        assert running_instances.first_address('surprise') is None
+        assert running_instances.first_address('surprise') == ''
 
     @fudge.patch('caiman.get_running_instances')
     def test_raises_valueerror_w_nonexistant_envvar(self, get_instances):
