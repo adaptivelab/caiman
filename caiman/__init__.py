@@ -107,8 +107,7 @@ class Ec2Instance(object):
     def address(self):
         """Address of wrapped ec2instance"""
         if not self._address:
-            attrs = ['publicIp', 'ip_address', 'public_dns_name',
-                     'private_ip_address']
+            attrs = ['publicIp', 'public_dns_name', 'private_ip_address']
 
             # build up an interable of all attributes that exist and are
             # not just empty strings
