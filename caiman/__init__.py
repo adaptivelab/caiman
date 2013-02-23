@@ -180,7 +180,8 @@ def add_remote_logger(remote_logger, logger_name, log_config):
 
 def get_remote_logger(instances):
     warnings.warn('get_remote_logger is deprecated; please use '
-                  'caiman.RunningInstances().first_address("logger") instead')
+                  'caiman.RunningInstances(SOMA_ENV).first_address("logger") '
+                  'instead')
     winner = next(instances, None)
     if winner:
         winner = Ec2Instance(winner).address
