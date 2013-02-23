@@ -2,6 +2,12 @@ import sys
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
+try:
+    # http://www.eby-sarna.com/pipermail/peak/2010-May/003357.html
+    import multiprocessing  # noqa
+except ImportError:
+    pass
+
 
 class PyTest(TestCommand):
 
@@ -24,8 +30,8 @@ setup(
     zip_safe=False,
     install_requires=[
         'boto==2.8.0',
+        'lazypy==0.5',
     ],
     tests_require=['fudge==1.0.3', 'pytest==2.3.4'],
     cmdclass={'test': PyTest},
-    install_requires=['lazypy==0.5'],
 )
