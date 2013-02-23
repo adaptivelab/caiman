@@ -158,15 +158,12 @@ DEFAULT_LOGGING = {
 
 
 def add_remote_logger(remote_logger, logger_name, log_config):
-    """Adds graypy handler to log_config.
+    """Returns log_config after adding a graypy handler
 
-    Args:
-        remote_logger: The ip or hostname of a logger server
-        logger_name: The name of logger to which we add the graypy handler
-        log_config: A pre-existing log_config dict to add the handler to
-
-    Returns:
-        The modified log_config dict
+    :param string remote_logger: The ip or hostname of a logger server
+    :param string logger_name: The name of logger to which we add the graypy handler
+    :param dict log_config: A pre-existing log_config dict to add the handler to
+    :rtype: dict
     """
     if remote_logger:
         log_config['handlers']['graypy'] = {

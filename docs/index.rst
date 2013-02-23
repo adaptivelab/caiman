@@ -21,12 +21,12 @@ API
    :members:
 .. autoattribute:: Ec2Instance
 
+.. autofunction:: add_remote_logger
+
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-
