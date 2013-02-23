@@ -6,9 +6,9 @@ from boto.ec2 import connect_to_region
 
 try:
     from logging import NullHandler
-except ImportError: # NOQA
+except ImportError:  # NOQA
 
-    class NullHandler(logging.Handler): # NOQA
+    class NullHandler(logging.Handler):  # NOQA
         def emit(self, record):
             pass
 
@@ -50,13 +50,13 @@ class RunningInstances(object):
         """
         self.environment_variable = environment_variable
 
-    def __call__(self, ec2_tag):
-        return self.get_instances(ec2_tag)
+    def __call__(self, description):
+        return self.get_instances(description)
 
-    def get_instances(self, role_or_ec2_tag):
+    def get_instances(self, description):
         """Return generator of discovered ec2 instances
 
-        :param string ec2_tag: description used to discover instances
+        :param string description: description used to discover instances
         """
         if self.environment_variable:
             try:
@@ -65,31 +65,31 @@ class RunningInstances(object):
                 raise ValueError('Cannot determine running instances with '
                                  'undefined {} environment variable'
                                  .format(self.environment_variable))
-            role_or_ec2_tag = get_name(role_or_ec2_tag, environment)
-        return get_running_instances(role_or_ec2_tag)
+            description = get_name(description, environment)
+        return get_running_instances(description)
 
-    def addresses(self, ec2_tag):
+    def addresses(self, description):
         """
         Return generator of the address of each discovered instance.
 
-        :param string ec2_tag: description used to discover instances
+        :param string description: description used to discover instances
         """
         return (Ec2Instance(host).address for host in
-                self.get_instances(ec2_tag))
+                self.get_instances(description))
 
-    def first_address(self, ec2_tag, default=''):
+    def first_address(self, description, default=''):
         """
         Return the 1st discovered address.
 
-        :param string ec2_tag: description used to discover instances
+        :param string description: description used to discover instances
         :param string default: fallback value used when no instances can be found
         :rtype: string
         """
-        return next(self.addresses(ec2_tag), default)
+        return next(self.addresses(description), default)
 
 
 class Ec2Instance(object):
-    """Wrapper around a boto ec2instance that adds address attribute.
+    """Wrapper around a boto ec2instance that adds an address attribute.
 
     Ec2Instance.address delegates to the 1st available way it can find to
     address the boto ec2instance with the order of preference being:
@@ -158,15 +158,12 @@ DEFAULT_LOGGING = {
 
 
 def add_remote_logger(remote_logger, logger_name, log_config):
-    """Adds graypy handler to log_config.
+    """Returns log_config after adding a graypy handler
 
-    Args:
-        remote_logger: The ip or hostname of a logger server
-        logger_name: The name of logger to which we add the graypy handler
-        log_config: A pre-existing log_config dict to add the handler to
-
-    Returns:
-        The modified log_config dict
+    :param string remote_logger: The ip or hostname of a logger server
+    :param string logger_name: The name of logger to which we add the graypy handler
+    :param dict log_config: A pre-existing log_config dict to add the handler to
+    :rtype: dict
     """
     if remote_logger:
         log_config['handlers']['graypy'] = {

@@ -1,6 +1,13 @@
 CAIMAN
 ======
 
+Documentation
+*************
+
+The latest version of the caiman docs is always available at
+`adaptivelab.github.com/caiman <http://adaptivelab.github.com/caiman>`_
+
+
 Using caiman
 ~~~~~~~~~~~~
 
@@ -74,17 +81,3 @@ almost identical to using it with fully-formed tags::
 The only difference in these cases is that instead of having to specify the
 full tag name `RunningInstances` automatically converted `database` into
 `projectname-demo-database` for us
-
-
-API
-~~~
-
-.. module:: caiman
-.. autoclass:: RunningInstances
-   :members:
-   :undoc-members:
-.. autoattribute:: RunningInstances
-
-.. autoclass:: Ec2Instance
-   :members:
-.. autoattribute:: Ec2Instance
