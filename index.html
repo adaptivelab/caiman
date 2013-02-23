@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to caiman’s documentation! &mdash; caiman 1.1.0 documentation</title>
+    <title>CAIMAN &mdash; caiman 1.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/pristine.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -50,18 +50,18 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-caiman-s-documentation">
-<h1>Welcome to caiman&#8217;s documentation!<a class="headerlink" href="#welcome-to-caiman-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
-<div class="toctree-wrapper compound">
+  <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
-</div>
 <div class="section" id="caiman">
 <h1>CAIMAN<a class="headerlink" href="#caiman" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The latest version of the caiman docs is always available at
+<a class="reference external" href="http://adaptivelab.github.com/caiman">adaptivelab.github.com/caiman</a></p>
 <div class="section" id="using-caiman">
-<h2>Using caiman<a class="headerlink" href="#using-caiman" title="Permalink to this headline">¶</a></h2>
+<h3>Using caiman<a class="headerlink" href="#using-caiman" title="Permalink to this headline">¶</a></h3>
 <p>The main useful feature of caiman is <cite>RunningInstances</cite> which is used for
 discovery of running ec2 instances:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">caiman</span> <span class="kn">import</span> <span class="n">RunningInstances</span>
@@ -131,20 +131,20 @@ full tag name <cite>RunningInstances</cite> automatically converted <cite>databa
 <cite>projectname-demo-database</cite> for us</p>
 </div>
 <div class="section" id="module-caiman">
-<span id="api"></span><h2>API<a class="headerlink" href="#module-caiman" title="Permalink to this headline">¶</a></h2>
+<span id="api"></span><h3>API<a class="headerlink" href="#module-caiman" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="caiman.RunningInstances">
 <em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">RunningInstances</tt><big>(</big><em>environment_variable=None</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discover running instances on ec2 by tag or by role.</p>
 <dl class="method">
 <dt id="caiman.RunningInstances.addresses">
-<tt class="descname">addresses</tt><big>(</big><em>ec2_tag</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.addresses" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">addresses</tt><big>(</big><em>description</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.addresses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return generator of the address of each discovered instance.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ec2_tag</strong> (<em>string</em>) &#8211; description used to discover instances</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> (<em>string</em>) &#8211; description used to discover instances</td>
 </tr>
 </tbody>
 </table>
@@ -152,14 +152,14 @@ full tag name <cite>RunningInstances</cite> automatically converted <cite>databa
 
 <dl class="method">
 <dt id="caiman.RunningInstances.first_address">
-<tt class="descname">first_address</tt><big>(</big><em>ec2_tag</em>, <em>default=''</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.first_address" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">first_address</tt><big>(</big><em>description</em>, <em>default=''</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.first_address" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the 1st discovered address.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ec2_tag</strong> (<em>string</em>) &#8211; description used to discover instances</li>
+<li><strong>description</strong> (<em>string</em>) &#8211; description used to discover instances</li>
 <li><strong>default</strong> (<em>string</em>) &#8211; fallback value used when no instances can be found</li>
 </ul>
 </td>
@@ -173,13 +173,13 @@ full tag name <cite>RunningInstances</cite> automatically converted <cite>databa
 
 <dl class="method">
 <dt id="caiman.RunningInstances.get_instances">
-<tt class="descname">get_instances</tt><big>(</big><em>role_or_ec2_tag</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.get_instances" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_instances</tt><big>(</big><em>description</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.get_instances" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return generator of discovered ec2 instances</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ec2_tag</strong> (<em>string</em>) &#8211; description used to discover instances</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>description</strong> (<em>string</em>) &#8211; description used to discover instances</td>
 </tr>
 </tbody>
 </table>
@@ -190,7 +190,7 @@ full tag name <cite>RunningInstances</cite> automatically converted <cite>databa
 <dl class="class">
 <dt id="caiman.Ec2Instance">
 <em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">Ec2Instance</tt><big>(</big><em>instance</em><big>)</big><a class="headerlink" href="#caiman.Ec2Instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper around a boto ec2instance that adds address attribute.</p>
+<dd><p>Wrapper around a boto ec2instance that adds an address attribute.</p>
 <p>Ec2Instance.address delegates to the 1st available way it can find to
 address the boto ec2instance with the order of preference being:</p>
 <blockquote>
@@ -214,13 +214,35 @@ address the boto ec2instance with the order of preference being:</p>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="caiman.add_remote_logger">
+<tt class="descclassname">caiman.</tt><tt class="descname">add_remote_logger</tt><big>(</big><em>remote_logger</em>, <em>logger_name</em>, <em>log_config</em><big>)</big><a class="headerlink" href="#caiman.add_remote_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns log_config after adding a graypy handler</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>remote_logger</strong> (<em>string</em>) &#8211; The ip or hostname of a logger server</li>
+<li><strong>logger_name</strong> (<em>string</em>) &#8211; The name of logger to which we add the graypy handler</li>
+<li><strong>log_config</strong> (<em>dict</em>) &#8211; A pre-existing log_config dict to add the handler to</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
 <li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
 </div>
@@ -233,12 +255,12 @@ address the boto ec2instance with the order of preference being:</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to caiman&#8217;s documentation!</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#caiman">CAIMAN</a><ul>
+<li><a class="reference internal" href="#">CAIMAN</a><ul>
+<li><a class="reference internal" href="#documentation">Documentation</a><ul>
 <li><a class="reference internal" href="#using-caiman">Using caiman</a></li>
 <li><a class="reference internal" href="#module-caiman">API</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>

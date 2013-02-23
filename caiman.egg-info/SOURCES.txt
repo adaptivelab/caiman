@@ -1,0 +1,8 @@
+setup.py
+caiman/__init__.py
+caiman.egg-info/PKG-INFO
+caiman.egg-info/SOURCES.txt
+caiman.egg-info/dependency_links.txt
+caiman.egg-info/not-zip-safe
+caiman.egg-info/requires.txt
+caiman.egg-info/top_level.txt
