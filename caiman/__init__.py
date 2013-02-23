@@ -6,9 +6,9 @@ from boto.ec2 import connect_to_region
 
 try:
     from logging import NullHandler
-except ImportError: # NOQA
+except ImportError:  # NOQA
 
-    class NullHandler(logging.Handler): # NOQA
+    class NullHandler(logging.Handler):  # NOQA
         def emit(self, record):
             pass
 
