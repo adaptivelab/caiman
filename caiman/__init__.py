@@ -2,6 +2,7 @@ import os
 import logging
 import warnings
 from boto.ec2 import connect_to_region
+from LazyEvaluation import lazy
 
 
 try:
@@ -22,6 +23,7 @@ def get_name(role, environment):
     return u'soma-{}-{}'.format(environment, role)
 
 
+@lazy
 def get_running_instances(name, vpc_id=None):
     filters = {'tag-key': name,
                'instance-state-name': 'running',
@@ -77,6 +79,7 @@ class RunningInstances(object):
         return (Ec2Instance(host).address for host in
                 self.get_instances(description))
 
+    @lazy
     def first_address(self, description, default=''):
         """
         Return the 1st discovered address.
