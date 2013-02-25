@@ -79,7 +79,11 @@ class RunningInstances(object):
                                  'undefined {} environment variable'
                                  .format(self.environment_variable))
             description = get_name(description, environment)
-        return get_running_instances(description)
+
+        ec2_wrap = functools.partial(Ec2Instance,
+                                     address_attributes=self.address_attributes)
+        return (ec2_wrap(instance) for instance in
+                get_running_instances(description))
 
     def addresses(self, description):
         """
@@ -87,10 +91,7 @@ class RunningInstances(object):
 
         :param string description: description used to discover instances
         """
-        ec2_instance = functools.partial(Ec2Instance,
-                                         address_attributes=self.address_attributes)
-        return (ec2_instance(host).address for host in
-                self.get_instances(description))
+        return (host.address for host in self.get_instances(description))
 
     def first_address(self, description, default=''):
         """
@@ -136,8 +137,11 @@ class Ec2Instance(object):
             self._address = next(options, None)
         return self._address
 
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
+
     def __repr__(self):
-        return '{} on {}'.format(repr(self.instance), self.address)
+        return self.address if self.address is not None else repr(self.instance)
 
 
 LOGLEVEL = 'DEBUG' if os.environ.get('SOMA_ENVIRONMENT', '') == 'demo' else 'ERROR'
