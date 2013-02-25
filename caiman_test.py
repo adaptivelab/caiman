@@ -7,6 +7,22 @@ import pytest
 class TestRunningInstance(object):
 
     @fudge.patch('caiman.get_running_instances')
+    def test_instances_delegate(self, get_running_instances):
+
+        (get_running_instances
+         .expects_call()
+         .with_args('some_name')
+         .returns(iter(range(1))))
+
+        running_instances = caiman.RunningInstances()
+        instance, = running_instances.get_instances('some_name')
+        with pytest.raises(AttributeError):
+
+            # in this case we instantiated our wrapper with an int and so
+            # 0.hostname will fail
+            instance.state_code
+
+    @fudge.patch('caiman.get_running_instances')
     def test_instances_are_wrapped(self, get_running_instances):
 
         (get_running_instances
