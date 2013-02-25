@@ -7,6 +7,18 @@ import pytest
 class TestRunningInstance(object):
 
     @fudge.patch('caiman.get_running_instances')
+    def test_instances_are_wrapped(self, get_running_instances):
+
+        (get_running_instances
+         .expects_call()
+         .with_args('some_name')
+         .returns(iter(range(1))))
+
+        running_instances = caiman.RunningInstances()
+        instance, = running_instances.get_instances('some_name')
+        assert hasattr(instance, 'instance')
+
+    @fudge.patch('caiman.get_running_instances')
     def test_can_set_a_specific_ec2_tag_instead_of_role(self, get_running_instances):
 
         (get_running_instances
@@ -16,7 +28,8 @@ class TestRunningInstance(object):
 
         running_instances = caiman.RunningInstances()
         result = running_instances('my_specific_ec2_tag')
-        assert list(result) == [0, 1, 2, 3, 4]
+        result = [res.instance for res in result]
+        assert result == [0, 1, 2, 3, 4]
 
     @fudge.patch('caiman.get_running_instances')
     def test_returns_callable(self, get_running_instances):
@@ -33,7 +46,8 @@ class TestRunningInstance(object):
 
         running_instances = caiman.RunningInstances('some_var')
         result = running_instances('break')
-        assert list(result) == [0, 1, 2, 3, 4]
+        result = [res.instance for res in result]
+        assert result == [0, 1, 2, 3, 4]
 
     @fudge.patch('caiman.get_running_instances')
     def test_addresses_returns_addresses(self, get_running_instances):
