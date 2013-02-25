@@ -92,6 +92,24 @@ class TestRunningInstance(object):
         with pytest.raises(ValueError):
             running_instances('doomed')
 
+    @fudge.patch('caiman.get_running_instances')
+    def test_can_set_address_order(self, get_running_instances):
+        """.address_order classmethod can set address preference"""
+        running_instances = (caiman
+                             .RunningInstances
+                             .address_order(address_attributes=['private_ip']))
+
+        attrs = dict(publicIp='no', private_ip='yes')
+        response = [type('a', (object, ), attrs), type('b', (object,), attrs)]
+
+        (get_running_instances
+         .expects_call()
+         .with_args('unprovisioned')
+         .returns(iter(response)))
+
+        addresses = running_instances.addresses('unprovisioned')
+        assert list(addresses) == ['yes', 'yes']
+
 
 class TestGetRunningInstances(object):
 

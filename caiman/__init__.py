@@ -1,5 +1,6 @@
 import os
 import logging
+import functools
 import warnings
 from boto.ec2 import connect_to_region
 
@@ -38,6 +39,8 @@ def get_running_instances(name, vpc_id=None):
 class RunningInstances(object):
     """Discover running instances on ec2 by tag or by role."""
 
+    address_attributes = []
+
     def __init__(self, environment_variable=None):
         """
 
@@ -49,6 +52,16 @@ class RunningInstances(object):
             denotes the current application enviroment (e.g.  demo, production)
         """
         self.environment_variable = environment_variable
+
+    @classmethod
+    def address_order(cls, environment_variable=None, address_attributes=None):
+        """Alternate constructor that allows defining address preference
+
+        :param address_attributes list: list of Ec2Instance attributes, used to determine the order in which addresses are used.
+        """
+        instance = cls(environment_variable)
+        instance.address_attributes = address_attributes or []
+        return instance
 
     def __call__(self, description):
         return self.get_instances(description)
@@ -74,7 +87,9 @@ class RunningInstances(object):
 
         :param string description: description used to discover instances
         """
-        return (Ec2Instance(host).address for host in
+        ec2_instance = functools.partial(Ec2Instance,
+                                         address_attributes=self.address_attributes)
+        return (ec2_instance(host).address for host in
                 self.get_instances(description))
 
     def first_address(self, description, default=''):
@@ -97,17 +112,20 @@ class Ec2Instance(object):
         * public_dns_name
         * private_ip_address
     """
+    address_attributes = ['publicIp', 'public_dns_name', 'private_ip_address']
 
-    def __init__(self, instance):
+    def __init__(self, instance, address_attributes=None):
         #: wrapped ec2instance
         self.instance = instance
         self._address = None
+        if address_attributes:
+            self.address_attributes = address_attributes
 
     @property
     def address(self):
         """Address of wrapped ec2instance"""
         if not self._address:
-            attrs = ['publicIp', 'public_dns_name', 'private_ip_address']
+            attrs = self.address_attributes
 
             # build up an interable of all attributes that exist and are
             # not just empty strings
@@ -180,7 +198,8 @@ def add_remote_logger(remote_logger, logger_name, log_config):
 
 def get_remote_logger(instances):
     warnings.warn('get_remote_logger is deprecated; please use '
-                  'caiman.RunningInstances().first_address("logger") instead')
+                  'caiman.RunningInstances(SOMA_ENV).first_address("logger") '
+                  'instead')
     winner = next(instances, None)
     if winner:
         winner = Ec2Instance(winner).address
