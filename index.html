@@ -136,6 +136,25 @@ full tag name <cite>RunningInstances</cite> automatically converted <cite>databa
 <dt id="caiman.RunningInstances">
 <em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">RunningInstances</tt><big>(</big><em>environment_variable=None</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discover running instances on ec2 by tag or by role.</p>
+<dl class="attribute">
+<dt id="caiman.RunningInstances.address_attributes">
+<tt class="descname">address_attributes</tt><em class="property"> = []</em><a class="headerlink" href="#caiman.RunningInstances.address_attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="caiman.RunningInstances.address_order">
+<em class="property">classmethod </em><tt class="descname">address_order</tt><big>(</big><em>environment_variable=None</em>, <em>address_attributes=None</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.address_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternate constructor that allows defining address preference</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list</strong> (<em>address_attributes</em>) &#8211; list of Ec2Instance attributes, used to determine the order in which addresses are used.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="caiman.RunningInstances.addresses">
 <tt class="descname">addresses</tt><big>(</big><em>description</em><big>)</big><a class="headerlink" href="#caiman.RunningInstances.addresses" title="Permalink to this definition">¶</a></dt>
@@ -189,7 +208,7 @@ full tag name <cite>RunningInstances</cite> automatically converted <cite>databa
 
 <dl class="class">
 <dt id="caiman.Ec2Instance">
-<em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">Ec2Instance</tt><big>(</big><em>instance</em><big>)</big><a class="headerlink" href="#caiman.Ec2Instance" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">caiman.</tt><tt class="descname">Ec2Instance</tt><big>(</big><em>instance</em>, <em>address_attributes=None</em><big>)</big><a class="headerlink" href="#caiman.Ec2Instance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper around a boto ec2instance that adds an address attribute.</p>
 <p>Ec2Instance.address delegates to the 1st available way it can find to
 address the boto ec2instance with the order of preference being:</p>
