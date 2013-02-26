@@ -15,3 +15,5 @@ fi
 py.test -q --cov caiman --cov-report=xml --cov-report=term-missing --junitxml=nosetests.xml .
 coverage xml
 pep8 caiman | tee pep8.out
+pylint -f parseable -d I0011,R0801 caiman | tee pylint.out
+clonedigger --cpd-output caiman
