@@ -12,6 +12,6 @@ fi
 
 . .env/bin/activate
 .env/bin/python setup.py install
-py.test -q --cov caiman .
+py.test -q --cov caiman --cov-report=xml --cov-report=term-missing .
 coverage xml
 pep8 caiman | tee pep8.out
