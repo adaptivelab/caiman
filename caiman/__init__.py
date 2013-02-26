@@ -57,7 +57,8 @@ class RunningInstances(object):
     def address_order(cls, environment_variable=None, address_attributes=None):
         """Alternate constructor that allows defining address preference
 
-        :param address_attributes list: list of Ec2Instance attributes, used to determine the order in which addresses are used.
+        :param address_attributes list: list of Ec2Instance attributes, used
+        to determine the order in which addresses are used.
         """
         instance = cls(environment_variable)
         instance.address_attributes = address_attributes or []
