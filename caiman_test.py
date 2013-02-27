@@ -193,21 +193,32 @@ class TestAddressLookupOrder(object):
 
     def test_can_be_set(self):
         ri = caiman.RunningInstances()
-        ri.set_lookup_order('this')
+        ri.set_address_lookup_order('this')
         assert ri.address_attributes == ['this']
 
-    def test_arg_order_determines_lookup_order(self):
+    def test_arg_order_determines_address_lookup_order(self):
         ri = caiman.RunningInstances()
-        ri.set_lookup_order('this', 'that', 'third')
+        ri.set_address_lookup_order('this', 'that', 'third')
         assert ri.address_attributes == ['this', 'that', 'third']
 
     def test_requires_at_least_one_value(self):
         ri = caiman.RunningInstances()
         with pytest.raises(TypeError):
-            ri.set_lookup_order()
+            ri.set_address_lookup_order()
 
     def test_can_reset_order_to_default(self):
         ri = caiman.RunningInstances()
-        ri.set_lookup_order('eenie', 'meenie')
-        ri.reset_lookup_order()
+        ri.set_address_lookup_order('eenie', 'meenie')
+        ri.reset_address_lookup_order()
+        assert ri.address_attributes == []
+
+    def test_can_work_as_context_manager(self):
+        ri = caiman.RunningInstances()
+        with ri.address_lookup_order('localhost'):
+            assert ri.address_attributes == ['localhost']
+
+    def test_context_manager_auto_resets_order(self):
+        ri = caiman.RunningInstances()
+        with ri.address_lookup_order('localhost'):
+            pass
         assert ri.address_attributes == []

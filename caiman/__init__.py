@@ -1,7 +1,8 @@
 import os
 import logging
-import functools
 import warnings
+import functools
+import contextlib
 from boto.ec2 import connect_to_region
 
 
@@ -64,20 +65,26 @@ class RunningInstances(object):
         instance.address_attributes = address_attributes or []
         return instance
 
-    def reset_lookup_order(self):
+    def reset_address_lookup_order(self):
         attrs = getattr(self, '_original_address_attributes', [])
         self.address_attributes = attrs
 
-    def set_lookup_order(self, *args):
+    def set_address_lookup_order(self, *args):
         """Set order Ec2Instance uses to determine instance address
 
         :param args: list of strings that denote the attributes that
         Ec2Instance will use (in the order provided)
         """
         if not args:
-            raise TypeError('set_lookup_order expects at least two arguments '
-                            'received one')
+            raise TypeError('{}() takes at least one argument (0 given)'
+                            .format('set_address_lookup_order'))
         self.address_attributes = list(args)
+
+    @contextlib.contextmanager
+    def address_lookup_order(self, *args):
+        self.set_address_lookup_order(*args)
+        yield
+        self.reset_address_lookup_order()
 
     @property
     def address_attributes(self):
