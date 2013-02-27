@@ -211,3 +211,14 @@ class TestAddressLookupOrder(object):
         ri.set_lookup_order('eenie', 'meenie')
         ri.reset_lookup_order()
         assert ri.address_attributes == []
+
+    def test_can_work_as_context_manager(self):
+        ri = caiman.RunningInstances()
+        with ri.lookup_order('localhost'):
+            assert ri.address_attributes == ['localhost']
+
+    def test_context_manager_auto_resets_order(self):
+        ri = caiman.RunningInstances()
+        with ri.lookup_order('localhost'):
+            pass
+        assert ri.address_attributes == []

@@ -1,7 +1,8 @@
 import os
 import logging
-import functools
 import warnings
+import functools
+import contextlib
 from boto.ec2 import connect_to_region
 
 
@@ -78,6 +79,12 @@ class RunningInstances(object):
             raise TypeError('set_lookup_order expects at least two arguments '
                             'received one')
         self.address_attributes = list(args)
+
+    @contextlib.contextmanager
+    def lookup_order(self, *args):
+        self.set_lookup_order(*args)
+        yield
+        self.reset_lookup_order()
 
     @property
     def address_attributes(self):
