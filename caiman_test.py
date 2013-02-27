@@ -7,6 +7,22 @@ import pytest
 class TestRunningInstance(object):
 
     @fudge.patch('caiman.get_running_instances')
+    def test_instances_delegate(self, get_running_instances):
+
+        (get_running_instances
+         .expects_call()
+         .with_args('some_name')
+         .returns(iter(range(1))))
+
+        running_instances = caiman.RunningInstances()
+        instance, = running_instances.get_instances('some_name')
+        with pytest.raises(AttributeError):
+
+            # in this case we instantiated our wrapper with an int and so
+            # 0.hostname will fail
+            instance.state_code
+
+    @fudge.patch('caiman.get_running_instances')
     def test_instances_are_wrapped(self, get_running_instances):
 
         (get_running_instances
@@ -167,3 +183,31 @@ class TestAddRemoteLogger(object):
                                                   logger_name,
                                                   log_config)
         assert updated_config['handlers']['graypy']['host'] == remote_address
+
+
+class TestAddressLookupOrder(object):
+
+    def test_defaults_to_no_preference(self):
+        ri = caiman.RunningInstances()
+        assert ri.address_attributes == []
+
+    def test_can_be_set(self):
+        ri = caiman.RunningInstances()
+        ri.set_lookup_order('this')
+        assert ri.address_attributes == ['this']
+
+    def test_arg_order_determines_lookup_order(self):
+        ri = caiman.RunningInstances()
+        ri.set_lookup_order('this', 'that', 'third')
+        assert ri.address_attributes == ['this', 'that', 'third']
+
+    def test_requires_at_least_one_value(self):
+        ri = caiman.RunningInstances()
+        with pytest.raises(TypeError):
+            ri.set_lookup_order()
+
+    def test_can_reset_order_to_default(self):
+        ri = caiman.RunningInstances()
+        ri.set_lookup_order('eenie', 'meenie')
+        ri.reset_lookup_order()
+        assert ri.address_attributes == []
