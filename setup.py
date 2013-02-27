@@ -17,7 +17,7 @@ class PyTest(TestCommand):
 
 setup(
     name='caiman',
-    version='1.6.1',
+    version='1.7.1',
     long_description='Simple helpers for aws',
     include_package_data=True,
     packages=['caiman'],
