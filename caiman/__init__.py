@@ -39,7 +39,7 @@ def get_running_instances(name, vpc_id=None):
 class RunningInstances(object):
     """Discover running instances on ec2 by tag or by role."""
 
-    address_attributes = []
+    _address_attributes = []
 
     def __init__(self, environment_variable=None):
         """
@@ -63,6 +63,31 @@ class RunningInstances(object):
         instance = cls(environment_variable)
         instance.address_attributes = address_attributes or []
         return instance
+
+    def reset_lookup_order(self):
+        attrs = getattr(self, '_original_address_attributes', [])
+        self.address_attributes = attrs
+
+    def set_lookup_order(self, *args):
+        """Set order Ec2Instance uses to determine instance address
+
+        :param args: list of strings that denote the attributes that
+        Ec2Instance will use (in the order provided)
+        """
+        if not args:
+            raise TypeError('set_lookup_order expects at least two arguments '
+                            'received one')
+        self.address_attributes = list(args)
+
+    @property
+    def address_attributes(self):
+        return self._address_attributes
+
+    @address_attributes.setter  # noqa
+    def address_attributes(self, value):
+        if not hasattr(self, '_original_address_attributes'):
+            self._original_address_attributes = self._address_attributes
+        self._address_attributes = value
 
     def __call__(self, description):
         return self.get_instances(description)
