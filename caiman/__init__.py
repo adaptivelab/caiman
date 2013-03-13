@@ -50,9 +50,23 @@ class RunningInstances(object):
         ec2 tag is used for discovering instances.
 
         :param string environment_variable: name of environment variable that
-            denotes the current application enviroment (e.g.  demo, production)
+            denotes the current application environment (e.g.  demo, production)
         """
         self.environment_variable = environment_variable
+
+    def __repr__(self):
+        mod = self.__class__.__module__
+        cls = self.__class__.__name__
+        mem = hex(id(self))
+
+        environment = ''
+        if self.environment_variable:
+            try:
+                environment = os.environ[self.environment_variable]
+            except KeyError:
+                environment = 'N/A'
+            environment = ', using {} environment'.format(environment)
+        return u'<{}.{} instance at {}{}>'.format(mod, cls, mem, environment)
 
     @classmethod
     def address_order(cls, environment_variable=None, address_attributes=None):
